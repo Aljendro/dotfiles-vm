@@ -1,0 +1,46 @@
+[user]
+  name   = Alejandro Alvarado
+  email  = alejandro.alvarado0650144@gmail.com
+  editor = nvim
+[core]
+  excludesfile = ~/.gitignore_global
+  pager = delta
+[push]
+  default = current
+[pull]
+  rebase = false
+[credential]
+  helper = libsecret
+[delta]
+  features = line-numbers decorations
+  syntax-theme = Nord
+  plus-style = syntax "#003800"
+  minus-style = syntax "#3f0001"
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
+  hunk-header-decoration-style = cyan box ul
+[delta "line-numbers"]
+  line-numbers-left-style = cyan
+  line-numbers-right-style = cyan
+  line-numbers-minus-style = 124
+  line-numbers-plus-style = 28
+[diff]
+  tool = nvimdiff
+[alias]
+  # Find commits mentioning specific code
+  mentions = "!f() { git log -S \"$1\" --oneline; }; f"
+  # Show changes in a specific commit
+  changes = "!f() { git diff \"$1\"^..\"$1\"; }; f"
+  # Delete multiple branches with fzf
+  dbranches = "!git branch | fzf -m | xargs git branch -d"
+  # Force delete multiple branches
+  Dbranches = "!git branch | fzf -m | xargs git branch -D"
+  # Undo last commit (soft)
+  undo = reset --soft HEAD~1
+  # Reset shortcuts
+  hard = reset --hard
+  soft = reset --soft
+  # Worktree add helper
+  wta = "!git_worktree_add"

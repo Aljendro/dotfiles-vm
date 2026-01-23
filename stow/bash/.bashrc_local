@@ -1,0 +1,28 @@
+# ~/.bashrc_local - Local configuration template
+# This file is for machine-specific variables and secrets
+# It is sourced by .bashrc but should NOT be committed to git
+
+# ==============================================================================
+# Environment Variables (Examples)
+# ==============================================================================
+
+# AWS Configuration
+# export AWS_PROFILE="default"
+# export AWS_REGION="us-east-1"
+
+# API Keys (never commit these!)
+# export OPENAI_API_KEY=""
+# export ANTHROPIC_API_KEY=""
+
+# Custom paths
+# export CUSTOM_PROJECT_DIR="$HOME/work"
+
+# ==============================================================================
+# Machine-Specific Settings
+# ==============================================================================
+
+# Override prompt for this machine
+# PS1="(vm) $PS1"
+
+# Local aliases
+# alias myproject='cd ~/projects/myproject'

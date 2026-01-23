@@ -1,0 +1,103 @@
+# ~/.inputrc - Readline configuration for bash vi mode
+
+# Vi editing mode
+set editing-mode vi
+
+# Show vi mode in prompt (insert/command)
+set show-mode-in-prompt on
+set vi-ins-mode-string \1\e[6 q\2
+set vi-cmd-mode-string \1\e[2 q\2
+
+# ==============================================================================
+# General Settings
+# ==============================================================================
+
+# Case-insensitive completion
+set completion-ignore-case on
+
+# Treat hyphens and underscores as equivalent
+set completion-map-case on
+
+# Show all matches if ambiguous
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+
+# Color files by type during completion
+set colored-stats on
+set visible-stats on
+
+# Append slash to completed directories
+set mark-directories on
+set mark-symlinked-directories on
+
+# Color the common prefix in completions
+set colored-completion-prefix on
+
+# Don't ring bell on completion
+set bell-style none
+
+# Single tab for completion (don't require double-tab)
+set show-all-if-ambiguous on
+
+# Limit completion display
+set completion-query-items 200
+set page-completions off
+
+# ==============================================================================
+# Vi Command Mode Bindings
+# ==============================================================================
+
+set keymap vi-command
+
+# Ctrl-L clears screen
+"\C-l": clear-screen
+
+# j and k for history search (like zsh)
+"k": history-search-backward
+"j": history-search-forward
+
+# Ctrl-P and Ctrl-N for history navigation
+"\C-p": previous-history
+"\C-n": next-history
+
+# v to edit command in editor
+"v": edit-and-execute-command
+
+# ==============================================================================
+# Vi Insert Mode Bindings
+# ==============================================================================
+
+set keymap vi-insert
+
+# Ctrl-L clears screen
+"\C-l": clear-screen
+
+# Ctrl-A and Ctrl-E for line navigation (emacs-style convenience)
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+
+# Ctrl-W to delete word backward
+"\C-w": backward-kill-word
+
+# Ctrl-U to delete line backward
+"\C-u": unix-line-discard
+
+# Ctrl-K to delete to end of line
+"\C-k": kill-line
+
+# Ctrl-P and Ctrl-N for history
+"\C-p": previous-history
+"\C-n": next-history
+
+# Arrow keys for history search based on current input
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Ctrl-R for reverse search (fzf will override this)
+"\C-r": reverse-search-history
+
+# jk to exit insert mode (vim muscle memory)
+"jk": vi-movement-mode
+
+# Escape alternatives
+"\C-[": vi-movement-mode
