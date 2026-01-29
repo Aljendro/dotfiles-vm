@@ -3,53 +3,39 @@
 
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+*i*) ;;
+*) return ;;
 esac
 
 # ==============================================================================
 # Environment Variables
 # ==============================================================================
 
-export DOTFILES_VM_DIR="$HOME/projects/dotfiles-vm"
-export NVM_DIR="$HOME/.nvm"
+export DOTFILES_VM_DIR="$HOME/dotfiles-vm"
 export RIPGREP_CONFIG_PATH="$HOME/.ripgrep"
 export EDITOR="nvim"
 export VISUAL="nvim"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-export TERM="xterm-256color"
 export HISTSIZE=10000
 export HISTFILESIZE=20000
 export HISTCONTROL=ignoreboth:erasedups
 
-# Go
-export GOPATH="$HOME/go"
-export GOROOT="/usr/local/go"
-
 # PATH configuration
-export PATH="$DOTFILES_VM_DIR/stow/bin/bin:$PATH"
+export PATH="$DOTFILES_VM_DIR/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
-
-# pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
 
 # ==============================================================================
 # Shell Options
 # ==============================================================================
 
-shopt -s histappend     # Append to history file
-shopt -s checkwinsize   # Update LINES and COLUMNS after each command
-shopt -s globstar       # Enable ** glob pattern
-shopt -s cdspell        # Autocorrect cd typos
-shopt -s dirspell       # Autocorrect directory names
-shopt -s autocd         # cd into directory by typing its name
+shopt -s histappend   # Append to history file
+shopt -s checkwinsize # Update LINES and COLUMNS after each command
+shopt -s globstar     # Enable ** glob pattern
+shopt -s cdspell      # Autocorrect cd typos
+shopt -s dirspell     # Autocorrect directory names
+shopt -s autocd       # cd into directory by typing its name
 
 # ==============================================================================
 # Vi Mode
@@ -62,42 +48,8 @@ set -o vi
 # ==============================================================================
 
 if [[ -f "$HOME/.bashrc_local" ]]; then
-    source "$HOME/.bashrc_local"
+  source "$HOME/.bashrc_local"
 fi
-
-# ==============================================================================
-# NVM Lazy Loading
-# ==============================================================================
-
-nvm() {
-    unset -f nvm node npm npx pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    nvm "$@"
-}
-
-node() {
-    unset -f nvm node npm npx pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    node "$@"
-}
-
-npm() {
-    unset -f nvm node npm npx pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    npm "$@"
-}
-
-npx() {
-    unset -f nvm node npm npx pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    npx "$@"
-}
-
-pnpm() {
-    unset -f nvm node npm npx pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    pnpm "$@"
-}
 
 # ==============================================================================
 # FZF Configuration
@@ -121,9 +73,7 @@ export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # Source FZF bash integration
-if [[ -f "$HOME/.fzf.bash" ]]; then
-    source "$HOME/.fzf.bash"
-fi
+eval "$(fzf --bash)"
 
 # ==============================================================================
 # Aliases
@@ -176,17 +126,13 @@ alias j='jobs -l'
 alias path='echo -e ${PATH//:/\\n}'
 alias grep='grep --color=auto'
 
-# Modern replacements (if available)
-command -v bat &>/dev/null && alias cat='bat --style=plain'
-command -v fd &>/dev/null && alias find='fd'
-
 # ==============================================================================
 # Prompt Configuration
 # ==============================================================================
 
 # Git branch in prompt
 parse_git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
 # Set prompt colors
@@ -206,7 +152,7 @@ PS1="${GREEN}\u${RESET}@${CYAN}\h${RESET}:${BLUE}\w${YELLOW}\$(parse_git_branch)
 
 # Copy to clipboard using xclip
 copy_to_clipboard() {
-    xclip -selection clipboard
+  xclip -selection clipboard
 }
 
 # ==============================================================================
@@ -222,21 +168,21 @@ bind -x '"\C-l": clear'
 
 # Enable programmable completion features
 if ! shopt -oq posix; then
-    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
-        source /usr/share/bash-completion/bash_completion
-    elif [[ -f /etc/bash_completion ]]; then
-        source /etc/bash_completion
-    fi
+  if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    source /usr/share/bash-completion/bash_completion
+  elif [[ -f /etc/bash_completion ]]; then
+    source /etc/bash_completion
+  fi
 fi
 
 # AWS CLI completion
 if command -v aws_completer &>/dev/null; then
-    complete -C "$(which aws_completer)" aws
+  complete -C "$(which aws_completer)" aws
 fi
 
 # Git completion
 if [[ -f /usr/share/bash-completion/completions/git ]]; then
-    source /usr/share/bash-completion/completions/git
+  source /usr/share/bash-completion/completions/git
 fi
 
 # ==============================================================================
@@ -245,5 +191,13 @@ fi
 
 # Greeting (optional, remove if unwanted)
 if [[ -z "$TMUX" ]]; then
-    echo "Welcome to $(hostname) - $(date '+%Y-%m-%d %H:%M')"
+  echo "Welcome to $(hostname) - $(date '+%Y-%m-%d %H:%M')"
 fi
+# Lima BEGIN
+# Make sure iptables and mount.fuse3 are available
+PATH="$PATH:/usr/sbin:/sbin"
+export PATH
+# Lima END
+
+# Activate MISE Globals
+eval "$(mise activate bash)"

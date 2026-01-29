@@ -1,16 +1,19 @@
 # dotfiles-vm
 
-Lightweight bash-based dotfiles for Ubuntu 24.04 LTS VM environments (Lima, etc.).
+Lightweight dotfiles for Fedora VM environments (Lima, etc.).
 
 ## Prerequisites
 
-This configuration expects the following tools to be installed (via cloud-init or manually):
+- **Ansible** - Version 2.10 or higher
+- **Python 3** - Required by Ansible
+
+The Ansible playbook will automatically install all other required tools:
 
 - **stow** - Symlink farm manager
 - **git** - Version control
 - **nvim** - Neovim editor
 - **tmux** - Terminal multiplexer
-- **fzf** - Fuzzy finder (apt install)
+- **fzf** - Fuzzy finder
 - **fd** - Fast file finder
 - **ripgrep** - Fast grep
 - **bat** - Cat with syntax highlighting
@@ -19,18 +22,25 @@ This configuration expects the following tools to be installed (via cloud-init o
 
 ## Installation
 
+### Quick Install (Fedora)
+
 ```bash
 # Clone the repository
-git clone https://github.com/Aljendro/dotfiles-vm.git ~/projects/dotfiles-vm
+git clone https://github.com/Aljendro/dotfiles-vm.git
+cd ~/dotfiles-vm
 
-# Run the installer
-cd ~/projects/dotfiles-vm
-./install.sh
+# Install Ansible and required collections
+sudo dnf install -y ansible
+ansible-galaxy collection install -r requirements.yml
+
+# Run the playbook
+ansible-playbook install.yml
 ```
 
 ## What's Included
 
 ### Bash Configuration (`stow/bash/`)
+
 - `.bashrc` - Main shell configuration with:
   - Vi mode editing
   - FZF integration
@@ -42,31 +52,32 @@ cd ~/projects/dotfiles-vm
 - `.bashrc_local` - Template for local/secret variables
 
 ### Git Configuration (`stow/git/`)
+
 - `.gitconfig` - Git settings with:
   - Delta pager for diffs
-  - Libsecret credential helper
   - Useful aliases
 - `.gitignore_global` - Global gitignore patterns
 
 ### Tmux Configuration (`stow/tmux/`)
+
 - `.tmux.conf` - Tmux settings with:
   - Prefix remapped to Ctrl+A
   - Vi keybindings
-  - Mouse support
-  - Powerline theme
-- `.tmux-themepack/` - Theme submodule
 
 ### Neovim Configuration (`stow/nvim/`)
+
 - `.config/nvim/` - Neovim starter config (submodule)
 
 ### Other Tools
+
 - `stow/ripgrep/.ripgrep` - Ripgrep defaults
 - `stow/fzf/.fzf.bash` - FZF bash integration
-- `stow/bin/bin/` - Utility scripts
+- `stow/bin` - Utility scripts
 
 ## Key Bindings
 
 ### Bash (Vi Mode)
+
 - `Esc` or `jk` - Enter command mode
 - `k/j` - History search (command mode)
 - `Ctrl+R` - FZF reverse history search
@@ -74,6 +85,7 @@ cd ~/projects/dotfiles-vm
 - `Alt+C` - FZF directory changer
 
 ### Tmux
+
 - `Ctrl+A` - Prefix
 - `Prefix + f` - Enter copy mode
 - `Prefix + t` - Fuzzy session switcher
@@ -95,12 +107,3 @@ export ANTHROPIC_API_KEY="sk-..."
 # Custom aliases
 alias myproject='cd ~/projects/myproject'
 ```
-
-## Lima VM Setup
-
-This repo is designed to work with Lima VMs. See the Lima configuration in the main dotfiles repo:
-- `~/projects/dotfiles/stow/lima/.lima/vm/lima.yaml`
-- `~/projects/dotfiles/stow/lima/.lima/vm/cloud-init.yaml`
-
-Start VM: `limactl start vm`
-Enter VM: `limactl shell vm`

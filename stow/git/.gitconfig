@@ -10,7 +10,7 @@
 [pull]
   rebase = false
 [credential]
-  helper = libsecret
+  helper = cache --timeout=21600
 [delta]
   features = line-numbers decorations
   syntax-theme = Nord

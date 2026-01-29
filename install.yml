@@ -1,0 +1,84 @@
+---
+# Dotfiles-VM Installation Playbook
+# Installs bash-based configurations for Fedora VM environment
+
+- name: Install dotfiles-vm
+  hosts: localhost
+  connection: local
+  become: false
+
+  vars:
+    dotfiles_vm_dir: "{{ lookup('env', 'PWD') }}"
+    stow_packages:
+      - bash
+      - git
+      - nvim
+      - ripgrep
+      - tmux
+
+  tasks:
+    - name: Display installation directory
+      ansible.builtin.debug:
+        msg: "Installing dotfiles-vm from: {{ dotfiles_vm_dir }}"
+
+    - name: Install prerequisite packages
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - awscli2
+          - bat
+          - curl
+          - fd-find
+          - fzf
+          - git
+          - git-delta
+          - jq
+          - lazygit
+          - lsof
+          - mise
+          - neovim
+          - python3-pip
+          - ripgrep
+          - stow
+          - tmux
+          - tree
+          - unzip
+          - wget
+          - xclip
+          - xorg-x11-xauth
+        state: present
+      tags: packages
+
+    - name: Initialize and update git submodules
+      ansible.builtin.command:
+        cmd: git submodule update --init --recursive
+        chdir: "{{ dotfiles_vm_dir }}"
+      register: submodule_result
+      changed_when: "'Cloning into' in submodule_result.stderr or 'Submodule path' in submodule_result.stderr"
+      tags: submodules
+
+    - name: Stow dotfiles packages
+      community.general.stow:
+        name: "{{ item }}"
+        dir: "{{ dotfiles_vm_dir }}/stow"
+        target: "{{ ansible_env.HOME }}"
+        state: present
+      loop: "{{ stow_packages }}"
+      tags: stow
+
+    - name: Display installation complete message
+      ansible.builtin.debug:
+        msg: |
+
+          Installation complete!
+
+          Next steps:
+            1. Copy .bashrc_local template and add your secrets:
+               cp ~/.bashrc_local ~/.bashrc_local.bak  # if exists
+               # Edit ~/.bashrc_local with your API keys and local settings
+
+            2. Reload your shell:
+               source ~/.bashrc
+
+            3. Install Neovim plugins (first launch will auto-install):
+               nvim
