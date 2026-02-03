@@ -95,14 +95,3 @@ ansible-playbook install.yml
 ## Customization
 
 Edit `~/.bashrc_local` for machine-specific settings:
-
-```bash
-# AWS Configuration
-export AWS_PROFILE="default"
-
-# API Keys
-export ANTHROPIC_API_KEY="sk-..."
-
-# Custom aliases
-alias myproject='cd ~/projects/myproject'
-```
