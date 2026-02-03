@@ -66,6 +66,15 @@
       changed_when: stow_result.rc == 0
       tags: stow
 
+    - name: Enable ForwardX11 in /etc/ssh/ssh_config
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/ssh_config
+        regexp: '^#?\s*ForwardX11\s+'
+        line: '    ForwardX11 yes'
+        state: present
+      tags: ssh
+
     - name: Display installation complete message
       ansible.builtin.debug:
         msg: |
