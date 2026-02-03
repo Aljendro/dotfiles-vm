@@ -79,6 +79,8 @@ eval "$(fzf --bash)"
 # Aliases
 # ==============================================================================
 
+alias e='exit'
+
 # Editor shortcuts
 alias n='nvim'
 alias nn='nvim -u NONE'
