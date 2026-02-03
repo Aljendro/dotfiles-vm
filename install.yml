@@ -71,23 +71,20 @@
       ansible.builtin.lineinfile:
         path: /etc/ssh/ssh_config
         regexp: '^#?\s*ForwardX11\s+'
-        line: '    ForwardX11 yes'
+        line: "    ForwardX11 yes"
         state: present
       tags: ssh
 
-    - name: Display installation complete message
-      ansible.builtin.debug:
-        msg: |
+    - name: Create nvim-local config directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/nvim-local"
+        state: directory
+        mode: "0755"
+      tags: nvim
 
-          Installation complete!
-
-          Next steps:
-            1. Copy .bashrc_local template and add your secrets:
-               cp ~/.bashrc_local ~/.bashrc_local.bak  # if exists
-               # Edit ~/.bashrc_local with your API keys and local settings
-
-            2. Reload your shell:
-               source ~/.bashrc
-
-            3. Install Neovim plugins (first launch will auto-install):
-               nvim
+    - name: Clone friendly-snipeets repository
+      ansible.builtin.git:
+        repo: https://github.com/aljendro/friendly-snippets.git
+        dest: "{{ ansible_env.HOME }}/.config/nvim-local/friendly-snippets"
+        version: HEAD
+      tags: nvim
