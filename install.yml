@@ -27,6 +27,7 @@
         name:
           - awscli2
           - bat
+          - clangd
           - curl
           - fd-find
           - fzf
