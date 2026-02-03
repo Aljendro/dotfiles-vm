@@ -31,7 +31,6 @@ cd ~/dotfiles-vm
 
 # Install Ansible and required collections
 sudo dnf install -y ansible
-ansible-galaxy collection install -r requirements.yml
 
 # Run the playbook
 ansible-playbook install.yml

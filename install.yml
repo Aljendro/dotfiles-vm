@@ -58,12 +58,11 @@
       tags: submodules
 
     - name: Stow dotfiles packages
-      community.general.stow:
-        name: "{{ item }}"
-        dir: "{{ dotfiles_vm_dir }}/stow"
-        target: "{{ ansible_env.HOME }}"
-        state: present
+      ansible.builtin.command:
+        cmd: stow -d "{{ dotfiles_vm_dir }}/stow" -t "{{ ansible_env.HOME }}" "{{ item }}"
       loop: "{{ stow_packages }}"
+      register: stow_result
+      changed_when: stow_result.rc == 0
       tags: stow
 
     - name: Display installation complete message
