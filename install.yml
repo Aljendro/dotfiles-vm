@@ -88,3 +88,22 @@
         dest: "{{ ansible_env.HOME }}/.config/nvim-local/friendly-snippets"
         version: HEAD
       tags: nvim
+
+    - name: Create start_project.local.sh script
+      ansible.builtin.copy:
+        dest: "{{ dotfiles_vm_dir }}/start_project.local.sh"
+        mode: "0755"
+        content: |
+          #!/bin/bash
+
+          session="dotfiles"
+          tmux has-session -t $session 2>/dev/null
+
+          if [ $? != 0 ]; then
+            tmux new -d -t $session
+            tmux rename-window -t $session:1 "Main"
+            tmux send -t $session:1 "nvim README.md" C-m
+          fi
+
+          echo "$session"
+      tags: scripts
