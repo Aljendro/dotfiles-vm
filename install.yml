@@ -66,6 +66,11 @@
       changed_when: stow_result.rc == 0
       tags: stow
 
+    - name: Reset the dotfiles dir
+      ansible.builtin.command:
+        cmd: git reset --hard
+        chdir: "{{ dotfiles_vm_dir }}"
+
     - name: Enable ForwardX11 in /etc/ssh/ssh_config
       become: true
       ansible.builtin.lineinfile:
