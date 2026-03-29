@@ -60,7 +60,7 @@
 
     - name: Stow dotfiles packages
       ansible.builtin.command:
-        cmd: stow -d "{{ dotfiles_vm_dir }}/stow" -t "{{ ansible_env.HOME }}" "{{ item }}"
+        cmd: stow --adopt -d "{{ dotfiles_vm_dir }}/stow" -t "{{ ansible_env.HOME }}" "{{ item }}"
       loop: "{{ stow_packages }}"
       register: stow_result
       changed_when: stow_result.rc == 0
@@ -88,6 +88,22 @@
         dest: "{{ ansible_env.HOME }}/.config/nvim-local/friendly-snippets"
         version: HEAD
       tags: nvim
+
+    - name: Install Claude Code CLI
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://claude.ai/install.sh | bash
+      args:
+        executable: /bin/bash
+      register: claude_install_result
+      changed_when: claude_install_result.rc == 0
+      tags: claude
+
+    - name: Add ~/.local/bin to PATH in ~/.bashrc
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: 'export PATH="$HOME/.local/bin:$PATH"'
+        state: present
+      tags: claude
 
     - name: Create start_project.local.sh script
       ansible.builtin.copy:
