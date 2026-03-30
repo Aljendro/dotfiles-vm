@@ -88,7 +88,6 @@ alias nf='nvim $(fzf)'
 alias ng='nvim $(rg --files-with-matches "" | fzf --preview "rg --color=always -n {} 2>/dev/null | head -200")'
 
 # Tmux
-alias t='tmux_switch'
 alias ta='tmux attach -t'
 alias tn='tmux new-session -s'
 alias tl='tmux list-sessions'
