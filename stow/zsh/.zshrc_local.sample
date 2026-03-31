@@ -1,6 +1,6 @@
-# ~/.bashrc_local - Local configuration template
+# ~/.zshrc_local - Local configuration template
 # This file is for machine-specific variables and secrets
-# It is sourced by .bashrc but should NOT be committed to git
+# It is sourced by .zshrc but should NOT be committed to git
 
 # ==============================================================================
 # Environment Variables (Examples)
@@ -22,7 +22,7 @@
 # ==============================================================================
 
 # Override prompt for this machine
-# PS1="(vm) $PS1"
+# PROMPT="(vm) $PROMPT"
 
 # Local aliases
 # alias myproject='cd ~/projects/myproject'

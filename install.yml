@@ -1,6 +1,6 @@
 ---
 # Dotfiles-VM Installation Playbook
-# Installs bash-based configurations for Fedora VM environment
+# Installs zsh-based configurations for Fedora VM environment
 
 - name: Install dotfiles-vm
   hosts: localhost
@@ -10,7 +10,7 @@
   vars:
     dotfiles_vm_dir: "{{ lookup('env', 'PWD') }}"
     stow_packages:
-      - bash
+      - zsh
       - git
       - nvim
       - ripgrep
@@ -47,6 +47,7 @@
           - wget
           - xclip
           - xorg-x11-xauth
+          - zsh
         state: present
       tags: packages
 
@@ -94,6 +95,13 @@
         version: HEAD
       tags: nvim
 
+    - name: Set user shell to zsh
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_env.USER }}"
+        shell: /bin/zsh
+      tags: shell
+
     - name: Install mise tools (node, go, rust)
       ansible.builtin.shell:
         cmd: |
@@ -101,23 +109,23 @@
           mise use --global node@latest
           mise use --global go@latest
           mise use --global rust@latest
-        executable: /bin/bash
+        executable: /bin/zsh
       register: mise_install_result
       changed_when: mise_install_result.rc == 0
       tags: mise_tools
 
     - name: Install Claude Code CLI
       ansible.builtin.shell:
-        cmd: curl -fsSL https://claude.ai/install.sh | bash
+        cmd: curl -fsSL https://claude.ai/install.sh | zsh
       args:
-        executable: /bin/bash
+        executable: /bin/zsh
       register: claude_install_result
       changed_when: claude_install_result.rc == 0
       tags: claude
 
-    - name: Add ~/.local/bin to PATH in ~/.bashrc
+    - name: Add ~/.local/bin to PATH in ~/.zshrc
       ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
+        path: "{{ ansible_env.HOME }}/.zshrc"
         line: 'export PATH="$HOME/.local/bin:$PATH"'
         state: present
       tags: claude
@@ -127,7 +135,7 @@
         dest: "{{ dotfiles_vm_dir }}/start_project.local.sh"
         mode: "0755"
         content: |
-          #!/bin/bash
+          #!/bin/zsh
 
           session="dotfiles"
           tmux has-session -t $session 2>/dev/null

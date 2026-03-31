@@ -1,11 +1,7 @@
-# ~/.bashrc - Bash configuration for VM environment
-# Adapted from zshrc for bash
+# ~/.zshrc - Zsh configuration for VM environment
 
 # If not running interactively, don't do anything
-case $- in
-*i*) ;;
-*) return ;;
-esac
+[[ $- != *i* ]] && return
 
 # ==============================================================================
 # Environment Variables
@@ -18,8 +14,8 @@ export VISUAL="nvim"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export HISTSIZE=10000
-export HISTFILESIZE=20000
-export HISTCONTROL=ignoreboth:erasedups
+export SAVEHIST=20000
+export HISTFILE="$HOME/.zsh_history"
 
 # PATH configuration
 export PATH="$DOTFILES_VM_DIR/bin:$PATH"
@@ -30,25 +26,43 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # Shell Options
 # ==============================================================================
 
-shopt -s histappend   # Append to history file
-shopt -s checkwinsize # Update LINES and COLUMNS after each command
-shopt -s globstar     # Enable ** glob pattern
-shopt -s cdspell      # Autocorrect cd typos
-shopt -s dirspell     # Autocorrect directory names
-shopt -s autocd       # cd into directory by typing its name
+setopt APPEND_HISTORY        # Append to history file
+setopt HIST_IGNORE_DUPS      # Ignore duplicate commands
+setopt HIST_IGNORE_ALL_DUPS  # Remove older duplicate entries
+setopt HIST_IGNORE_SPACE     # Ignore commands starting with space
+setopt EXTENDED_GLOB         # Enable extended glob patterns
+setopt AUTO_CD               # cd into directory by typing its name
+setopt CORRECT               # Autocorrect typos
 
 # ==============================================================================
 # Vi Mode
 # ==============================================================================
 
-set -o vi
+bindkey -v
+
+# Reduce key timeout for mode switching
+export KEYTIMEOUT=1
+
+# Change cursor shape for different vi modes
+function zle-keymap-select {
+  if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+    echo -ne '\e[2 q'
+  elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ $1 = 'beam' ]]; then
+    echo -ne '\e[6 q'
+  fi
+}
+zle -N zle-keymap-select
+
+# Use beam cursor on startup and for each new prompt
+zle-line-init() { echo -ne '\e[6 q' }
+zle -N zle-line-init
 
 # ==============================================================================
 # Local Configuration (secrets, machine-specific)
 # ==============================================================================
 
-if [[ -f "$HOME/.bashrc_local" ]]; then
-  source "$HOME/.bashrc_local"
+if [[ -f "$HOME/.zshrc_local" ]]; then
+  source "$HOME/.zshrc_local"
 fi
 
 # ==============================================================================
@@ -72,8 +86,8 @@ export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-ran
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
-# Source FZF bash integration
-eval "$(fzf --bash)"
+# Source FZF zsh integration
+eval "$(fzf --zsh)"
 
 # ==============================================================================
 # Aliases
@@ -121,7 +135,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 # Utilities
-alias sb='source ~/.bashrc'
+alias sz='source ~/.zshrc'
 alias h='history'
 alias j='jobs -l'
 alias path='echo -e ${PATH//:/\\n}'
@@ -131,21 +145,16 @@ alias grep='grep --color=auto'
 # Prompt Configuration
 # ==============================================================================
 
+# Enable prompt substitution
+setopt PROMPT_SUBST
+
 # Git branch in prompt
 parse_git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
-# Set prompt colors
-RESET='\[\033[0m\]'
-BOLD='\[\033[1m\]'
-GREEN='\[\033[32m\]'
-BLUE='\[\033[34m\]'
-CYAN='\[\033[36m\]'
-YELLOW='\[\033[33m\]'
-
 # Prompt: user@host:path (git-branch)$
-PS1="${GREEN}\u${RESET}@${CYAN}\h${RESET}:${BLUE}\w${YELLOW}\$(parse_git_branch)${RESET}\$ "
+PROMPT='%F{green}%n%f@%F{cyan}%m%f:%F{blue}%~%F{yellow}$(parse_git_branch)%f$ '
 
 # ==============================================================================
 # Clipboard Integration (Vi mode yank)
@@ -157,33 +166,65 @@ copy_to_clipboard() {
 }
 
 # ==============================================================================
-# Key Bindings (see .inputrc for more)
+# Key Bindings
 # ==============================================================================
 
 # Ctrl-L to clear screen (works in vi mode)
-bind -x '"\C-l": clear'
+bindkey -M viins '^L' clear-screen
+bindkey -M vicmd '^L' clear-screen
+
+# Ctrl-A and Ctrl-E for line navigation (emacs-style convenience)
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^E' end-of-line
+
+# Ctrl-W to delete word backward
+bindkey -M viins '^W' backward-kill-word
+
+# Ctrl-U to delete line backward
+bindkey -M viins '^U' kill-whole-line
+
+# Ctrl-K to delete to end of line
+bindkey -M viins '^K' kill-line
+
+# Ctrl-P and Ctrl-N for history
+bindkey -M viins '^P' up-line-or-history
+bindkey -M viins '^N' down-line-or-history
+bindkey -M vicmd '^P' up-line-or-history
+bindkey -M vicmd '^N' down-line-or-history
+
+# k and j in command mode for history search
+bindkey -M vicmd 'k' history-search-backward
+bindkey -M vicmd 'j' history-search-forward
+
+# Arrow keys for history search based on current input
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# v in command mode to edit in editor
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd 'v' edit-command-line
 
 # ==============================================================================
 # Completion
 # ==============================================================================
 
-# Enable programmable completion features
-if ! shopt -oq posix; then
-  if [[ -f /usr/share/bash-completion/bash_completion ]]; then
-    source /usr/share/bash-completion/bash_completion
-  elif [[ -f /etc/bash_completion ]]; then
-    source /etc/bash_completion
-  fi
-fi
+# Initialize completion system
+autoload -Uz compinit && compinit
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Colored completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Menu selection
+zstyle ':completion:*' menu select
 
 # AWS CLI completion
 if command -v aws_completer &>/dev/null; then
+  autoload bashcompinit && bashcompinit
   complete -C "$(which aws_completer)" aws
-fi
-
-# Git completion
-if [[ -f /usr/share/bash-completion/completions/git ]]; then
-  source /usr/share/bash-completion/completions/git
 fi
 
 # ==============================================================================
@@ -201,4 +242,4 @@ export PATH
 # Lima END
 
 # Activate MISE Globals
-eval "$(mise activate bash)"
+eval "$(mise activate zsh)"
