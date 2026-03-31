@@ -150,3 +150,11 @@
 
           echo "$session"
       tags: scripts
+
+    - name: Create .ignore file
+      ansible.builtin.copy:
+        dest: "{{ dotfiles_vm_dir }}/.ignore"
+        mode: "0755"
+        content: |
+          !start_project.local.sh
+      tags: scripts
