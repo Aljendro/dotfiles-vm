@@ -98,7 +98,7 @@
       ansible.builtin.shell:
         cmd: |
           export PATH="$HOME/.local/bin:$PATH"
-          mise use --global node@latest
+          mise use --global node@24
           mise use --global go@latest
           mise use --global rust@latest
         executable: /bin/bash
