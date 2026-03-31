@@ -106,6 +106,16 @@
       changed_when: mise_install_result.rc == 0
       tags: mise_tools
 
+    - name: Install neovim npm package globally
+      ansible.builtin.shell:
+        cmd: |
+          export PATH="$HOME/.local/bin:$PATH"
+          npm install -g neovim
+        executable: /bin/bash
+      register: npm_neovim_result
+      changed_when: npm_neovim_result.rc == 0
+      tags: mise_tools
+
     - name: Install Claude Code CLI
       ansible.builtin.shell:
         cmd: curl -fsSL https://claude.ai/install.sh | bash
