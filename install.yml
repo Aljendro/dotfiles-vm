@@ -106,12 +106,22 @@
       ansible.builtin.shell:
         cmd: |
           export PATH="$HOME/.local/bin:$PATH"
-          mise use --global node@latest
+          mise use --global node@24
           mise use --global go@latest
           mise use --global rust@latest
         executable: /bin/zsh
       register: mise_install_result
       changed_when: mise_install_result.rc == 0
+      tags: mise_tools
+
+    - name: Install neovim npm package globally
+      ansible.builtin.shell:
+        cmd: |
+          export PATH="$HOME/.local/bin:$PATH"
+          npm install -g neovim
+        executable: /bin/bash
+      register: npm_neovim_result
+      changed_when: npm_neovim_result.rc == 0
       tags: mise_tools
 
     - name: Install Claude Code CLI
@@ -147,4 +157,12 @@
           fi
 
           echo "$session"
+      tags: scripts
+
+    - name: Create .ignore file
+      ansible.builtin.copy:
+        dest: "{{ dotfiles_vm_dir }}/.ignore"
+        mode: "0755"
+        content: |
+          !start_project.local.sh
       tags: scripts
