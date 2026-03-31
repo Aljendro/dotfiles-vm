@@ -126,9 +126,9 @@
 
     - name: Install Claude Code CLI
       ansible.builtin.shell:
-        cmd: curl -fsSL https://claude.ai/install.sh | zsh
+        cmd: curl -fsSL https://claude.ai/install.sh | bash
       args:
-        executable: /bin/zsh
+        executable: /bin/bash
       register: claude_install_result
       changed_when: claude_install_result.rc == 0
       tags: claude
