@@ -118,7 +118,7 @@
       ansible.builtin.shell:
         cmd: |
           export PATH="$HOME/.local/bin:$PATH"
-          npm install -g neovim @anthropic-ai/claude-code
+          npm install -g neovim @anthropic-ai/claude-code @github/copilot
         executable: /bin/bash
       register: npm_neovim_result
       changed_when: npm_neovim_result.rc == 0
