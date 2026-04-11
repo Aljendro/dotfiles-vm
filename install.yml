@@ -121,7 +121,6 @@
     - name: Install mise tools (node, go, rust)
       ansible.builtin.shell:
         cmd: |
-          export PATH="$HOME/.local/bin:$PATH"
           mise use --global node@24
           mise use --global go@latest
           mise use --global rust@latest
@@ -133,9 +132,9 @@
     - name: Install npm packages globally
       ansible.builtin.shell:
         cmd: |
-          export PATH="$HOME/.local/bin:$PATH"
+          eval "$(mise activate --shims)"
           npm install -g neovim @anthropic-ai/claude-code @github/copilot
-        executable: /bin/bash
+        executable: /bin/zsh
       register: npm_neovim_result
       changed_when: npm_neovim_result.rc == 0
       tags: mise_tools
