@@ -117,6 +117,7 @@ alias gl='git log --oneline -20'
 alias gco='git checkout'
 alias gb='git branch'
 alias gw='git worktree'
+alias ginit='git init && git add . && git commit -am "init"'
 
 # Directory navigation
 alias ..='cd ..'
