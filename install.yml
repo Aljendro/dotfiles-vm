@@ -118,13 +118,6 @@
         version: HEAD
       tags: nvim
 
-    - name: Set user shell to zsh
-      become: true
-      ansible.builtin.user:
-        name: "{{ ansible_env.USER }}"
-        shell: /bin/zsh
-      tags: shell
-
     - name: Install mise tools (node, go, rust)
       ansible.builtin.shell:
         cmd: |
