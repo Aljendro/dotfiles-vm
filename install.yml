@@ -87,7 +87,7 @@
         cmd: stow --adopt -d "{{ dotfiles_vm_dir }}/stow" -t "{{ ansible_env.HOME }}" "{{ item }}"
       loop: "{{ stow_packages }}"
       register: stow_result
-      changed_when: stow_result.rc == 0
+      changed_when: stow_result.stdout != ""
       tags: stow
 
     - name: Reset the dotfiles dir
@@ -101,6 +101,15 @@
         path: /etc/ssh/ssh_config
         regexp: '^#?\s*ForwardX11\s+'
         line: "    ForwardX11 yes"
+        state: present
+      tags: ssh
+
+    - name: Set ForwardX11Trusted to no in /etc/ssh/ssh_config
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/ssh_config
+        regexp: '^#?\s*ForwardX11Trusted\s+'
+        line: "    ForwardX11Trusted no"
         state: present
       tags: ssh
 
@@ -126,7 +135,7 @@
           mise use --global rust@latest
         executable: /bin/zsh
       register: mise_install_result
-      changed_when: mise_install_result.rc == 0
+      changed_when: mise_install_result.stdout != ""
       tags: mise_tools
 
     - name: Install npm packages globally
@@ -136,7 +145,7 @@
           npm install -g neovim @anthropic-ai/claude-code @github/copilot corepack@latest
         executable: /bin/zsh
       register: npm_neovim_result
-      changed_when: npm_neovim_result.rc == 0
+      changed_when: "'added' in npm_neovim_result.stdout or 'changed' in npm_neovim_result.stdout"
       tags: mise_tools
 
     - name: Add ~/.local/bin to PATH in ~/.zshrc
