@@ -133,6 +133,8 @@
           mise use --global node@24
           mise use --global go@latest
           mise use --global rust@latest
+          mise use --global clojure@latest
+          mise use --global java@25
         executable: /bin/zsh
       register: mise_install_result
       changed_when: mise_install_result.stdout != ""
