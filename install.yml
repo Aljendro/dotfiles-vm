@@ -144,7 +144,7 @@
       ansible.builtin.shell:
         cmd: |
           eval "$(mise activate --shims)"
-          npm install -g neovim @anthropic-ai/claude-code @github/copilot corepack@latest
+          npm install -g neovim @anthropic-ai/claude-code corepack@latest
         executable: /bin/zsh
       register: npm_neovim_result
       changed_when: "'added' in npm_neovim_result.stdout or 'changed' in npm_neovim_result.stdout"
