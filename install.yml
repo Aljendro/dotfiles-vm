@@ -135,6 +135,7 @@
           mise use --global rust@latest
           mise use --global clojure@latest
           mise use --global java@25
+          mise use --global babashka@latest
         executable: /bin/zsh
       register: mise_install_result
       changed_when: mise_install_result.stdout != ""
